@@ -1,7 +1,16 @@
-all: owt
+command="clang -std=c99 -Wall -g "
 
-owt: main.o
-	gcc -std=c99 -Wall -g -lgsl -lblas -lm -o owt main.c
+all: owt
+	echo All done
+
+owt: owt.o main.o
+	clang -g -lgsl -lm -lblas -o $@ $^
+
+%.o: %.c
+	clang -std=c99 -g -c $<
+
+owt.o: owt.c owt.h
+main.o: main.c
 
 clean: 
 	rm main.o owt
