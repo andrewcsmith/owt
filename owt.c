@@ -60,6 +60,7 @@ gsl_vector* owt_optimize_temperament(int num_pitches, double* ideal_intervals,
   //
   // In the following representation, the rows are each interval, and the
   // columns are each key.
+  /*
   printf("== weights vector:\n");
   for (int i = 0; i < num_pitches-1; i++) {
     for (int j = 0; j < num_pitches; j++) {
@@ -67,6 +68,7 @@ gsl_vector* owt_optimize_temperament(int num_pitches, double* ideal_intervals,
     }
     printf("\n");
   }
+  */
 
   // best-fit results
   c = gsl_vector_alloc(num_pitches-1);
@@ -78,6 +80,7 @@ gsl_vector* owt_optimize_temperament(int num_pitches, double* ideal_intervals,
   gsl_multifit_wlinear(X, w, y, c, cov, chisq, work);
   gsl_multifit_linear_free(work);
 
+  /*
   printf("\n== covariance matrix:\n");
   for (int i = 0; i < num_pitches-1; i++) {
     for (int j = 0; j < num_pitches-1; j++) {
@@ -85,6 +88,7 @@ gsl_vector* owt_optimize_temperament(int num_pitches, double* ideal_intervals,
     }
     printf("\n");
   }
+  */
 
   gsl_matrix_free(cov);
   gsl_matrix_free(X);
@@ -94,6 +98,64 @@ gsl_vector* owt_optimize_temperament(int num_pitches, double* ideal_intervals,
   return c;
 }
 
+double owt_interval_std(int num_pitches, int interval_stride, double interval_ideal, 
+    double octave, gsl_vector* tuning)
+{
+  gsl_vector *errors, *intervals;
+  errors = gsl_vector_alloc(num_pitches);
+  intervals = gsl_vector_alloc(num_pitches);
+  // The octave below
+  int inversion = interval_stride - num_pitches;
+
+  for (int i = 0; i < num_pitches; i++) {
+    double interval, tonic;
+    tonic = gsl_vector_get(tuning, i);
+    if (i + interval_stride >= num_pitches) {
+      interval = gsl_vector_get(tuning, i + inversion) + octave;
+    } else {
+      interval = gsl_vector_get(tuning, i + interval_stride);
+    }
+    // Set the intervals vector to the various thirds
+    gsl_vector_set(intervals, i, interval - tonic);
+  }
+  // Set the errors vector to the ideal interval
+  gsl_vector_set_all(errors, interval_ideal);
+
+  // Subtract the actual intervals from the expected intervals
+  gsl_vector_sub(errors, intervals);
+  printf("\nerrors:\n");
+  for (int i = 0; i < num_pitches; i++)
+    printf("%0.2f\t", gsl_vector_get(errors, i));
+  return gsl_stats_sd(errors, 1, num_pitches);
+}
+
+double owt_interval_error_max(int num_pitches, int interval_stride, double interval_ideal,
+		double octave, gsl_vector* tuning)
+{
+  gsl_vector *errors, *intervals;
+  errors = gsl_vector_alloc(num_pitches);
+  intervals = gsl_vector_alloc(num_pitches);
+  // The octave below
+  int inversion = interval_stride - num_pitches;
+
+  for (int i = 0; i < num_pitches; i++) {
+    double interval, tonic;
+    tonic = gsl_vector_get(tuning, i);
+    if (i + interval_stride >= num_pitches) {
+      interval = gsl_vector_get(tuning, i + inversion) + octave;
+    } else {
+      interval = gsl_vector_get(tuning, i + interval_stride);
+    }
+    // Set the intervals vector to the various thirds
+    gsl_vector_set(intervals, i, interval - tonic);
+  }
+  // Set the errors vector to the ideal interval
+  gsl_vector_set_all(errors, interval_ideal);
+
+  // Subtract the actual intervals from the expected intervals
+  gsl_vector_sub(errors, intervals);
+  return abs(gsl_vector_get(errors, gsl_blas_idamax(errors)));
+}
 // next: use multidimensional minimization to minimize the vector of weights
 // from a given tuning system.
 
