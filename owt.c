@@ -53,23 +53,6 @@ gsl_vector* owt_optimize_temperament(int num_pitches, double* ideal_intervals,
     }
   }
 
-  // Weights vector is made up of contiguous blocks of each interval in each
-  // key. For a repeat factor containing n notes, the first n elements are the
-  // weight of interval 1 multiplied by the weight of each successive key
-  // weight. This cycles through the entire matrix. 
-  //
-  // In the following representation, the rows are each interval, and the
-  // columns are each key.
-  /*
-  printf("== weights vector:\n");
-  for (int i = 0; i < num_pitches-1; i++) {
-    for (int j = 0; j < num_pitches; j++) {
-      printf("%0.3f\t", gsl_vector_get(w, i*num_pitches + j));
-    }
-    printf("\n");
-  }
-  */
-
   // best-fit results
   c = gsl_vector_alloc(num_pitches-1);
   // covariance results, or (X^T * W * X)^{-1}
@@ -79,16 +62,6 @@ gsl_vector* owt_optimize_temperament(int num_pitches, double* ideal_intervals,
     gsl_multifit_linear_alloc(num_pitches * (num_pitches-1), num_pitches-1);
   gsl_multifit_wlinear(X, w, y, c, cov, chisq, work);
   gsl_multifit_linear_free(work);
-
-  /*
-  printf("\n== covariance matrix:\n");
-  for (int i = 0; i < num_pitches-1; i++) {
-    for (int j = 0; j < num_pitches-1; j++) {
-      printf("%0.5f\t", gsl_matrix_get(cov, i, j));
-    }
-    printf("\n");
-  }
-  */
 
   gsl_matrix_free(cov);
   gsl_matrix_free(X);
@@ -128,6 +101,11 @@ gsl_vector* owt_interval_error(int num_pitches, int interval_stride, double inte
 
   // Subtract the actual intervals from the expected intervals
   gsl_vector_sub(errors, intervals);
+
+  for (int i = 0; i < num_pitches; i++) {
+    double error = gsl_vector_get(errors, i);
+    gsl_vector_set(errors, i, fabs(error));
+  }
 
   gsl_vector_free(intervals);
   return errors;
