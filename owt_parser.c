@@ -8,7 +8,7 @@
 #define MAX_LINE_LENGTH 1024
 
 /* returns the number of pitches */
-Criteria owt_parse(char* path_to_file) {
+OWTCriteria owt_parse(char* path_to_file) {
   /* Read in the tuning file */
   FILE *tuning_file = fopen(path_to_file, "r");
   if ( tuning_file == NULL ) {
@@ -22,7 +22,7 @@ Criteria owt_parse(char* path_to_file) {
   int num_tokens;
   char* significant_tokens = malloc(MAX_LINE_LENGTH);
 
-  Criteria criteria;
+  OWTCriteria criteria;
 
   for (int i = 0; i < MAX_LINES; i++)
     tokenized_line[i] = malloc(MAX_LINE_LENGTH);

@@ -17,7 +17,7 @@ int main(int argc, char** argv) {
       strcpy(path_to_output_file, argv[arg+1]);
   }
 
-  Criteria criteria = owt_parse(path_to_file);
+  OWTCriteria criteria = owt_parse(path_to_file);
 
   if (criteria.num_pitches <= 0) {
     printf("Error occured with owt_parse. Whoops.\n");
@@ -82,6 +82,7 @@ int main(int argc, char** argv) {
     fclose(output_file);
   }
 
+  /* TODO: I don't like how we have to dealloc inside the struct */
   gsl_vector_free(results.optimal_tuning);
   gsl_vector_free(third_error);
   gsl_vector_free(fifth_error);
