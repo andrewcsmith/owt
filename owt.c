@@ -1,3 +1,4 @@
+#include <gsl/gsl_blas.h>
 #include "owt.h"
 
 OWTResults owt_optimize_temperament(OWTCriteria* criteria) {
@@ -134,6 +135,14 @@ void owt_criteria_memcpy(OWTCriteria* dest, OWTCriteria* src) {
 /*   } */
 /* } */
 
+void normalize_vector(gsl_vector* vec, double min, double max) {
+  double old_min = gsl_vector_min(vec);
+  double old_max = gsl_vector_max(vec);
+  double range = old_max - old_min;
+  gsl_vector_add_constant(vec, min - old_min);
+  gsl_vector_scale(vec, 1.0 / range);
+}
+
 void owt_populate_weights_vector(gsl_vector* w, OWTCriteria* criteria) {
   for (int i = 0; i < criteria->num_pitches-1; i++) {
     for (int j = 0; j < criteria->num_pitches; j++) {
@@ -141,6 +150,8 @@ void owt_populate_weights_vector(gsl_vector* w, OWTCriteria* criteria) {
           criteria->key_weights[j] * criteria->interval_weights[i]);
     }
   }
+  double scale = 1.0 / gsl_blas_dasum(w);
+  gsl_vector_scale(w, scale);
 }
 
 gsl_vector* owt_interval_error(int num_pitches, int interval_stride, 

@@ -33,6 +33,7 @@ void owt_populate_ideal_interval_vector(gsl_vector* y, OWTCriteria* criteria);
 void owt_populate_weights_vector(gsl_vector* w, OWTCriteria* criteria);
 double owt_deviation_from_tuning(const gsl_vector *x, void *params);
 void owt_criteria_memcpy(OWTCriteria* dest, OWTCriteria* src);
+void normalize_vector(gsl_vector* vec, double min, double max);
 
 gsl_vector* owt_interval_error(int num_pitches, int interval_stride, double interval_ideal,
     double octave, gsl_vector* tuning);

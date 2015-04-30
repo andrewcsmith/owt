@@ -88,6 +88,12 @@ int main(int argc, char** argv) {
   do {
     iter++;
     status = gsl_multimin_fminimizer_iterate(s);
+    normalize_vector(s->x, 0.0, 1.0);
+
+    /* double range = gsl_vector_max(s->x) - gsl_vector_min(s->x); */
+    /* gsl_vector_add_constant(s->x, 0.0 - gsl_vector_min(s->x)); */
+    /* gsl_vector_scale(s->x, 1.0 / range); */
+    
     if (status) break;
 
     size = gsl_multimin_fminimizer_size(s);
@@ -104,14 +110,14 @@ int main(int argc, char** argv) {
       /* printf("\nChi-squared is: %f\n", results.chisq); */
 
       // If it's really bad, start over...
-      if (results.chisq > 750.0) {
-        /* printf("Starting over!\n"); */
-        for (int i = 0; i < criteria.num_pitches; i++) {
-          gsl_vector_set(x, i, gsl_rng_uniform_pos(r));
-        }
-        gsl_multimin_fminimizer_set(s, &minex_func, x, ss);
-        status = GSL_CONTINUE;
-      }
+      /* if (results.chisq > 50.0) { */
+      /*   #<{(| printf("Starting over!\n"); |)}># */
+      /*   for (int i = 0; i < criteria.num_pitches; i++) { */
+      /*     gsl_vector_set(x, i, gsl_rng_uniform_pos(r)); */
+      /*   } */
+      /*   gsl_multimin_fminimizer_set(s, &minex_func, x, ss); */
+      /*   status = GSL_CONTINUE; */
+      /* } */
     }
   } while (status == GSL_CONTINUE && iter < 100000);
   printf("Converged to minimum on iteration %i\n", iter);
