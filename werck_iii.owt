@@ -1,0 +1,9 @@
+# Source file for our OWT 2 tuning. This should result in something close to OWT 2.
+title: Werckmeister III 
+num_pitches: 12
+ideal_intervals: 112 204 316 386 498 600 702 814 884 996 1088
+# Interval weights are the inverse of the standard deviation, normalized to sum to 1
+interval_weights: 0.03216237695997014 0.386142308153506 0.1893393318094423 0.08894186190860016 1.0 0.0 1.0 0.08894186190860016 0.1893393318094423 0.386142308153506 0.03216237695997014
+key_weights: 1 0.001 0.001 0.001 0.001 1 0.001 1 0.001 0.001 0.001 0.001
+repeat_factor: 1200.0
+

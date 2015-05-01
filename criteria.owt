@@ -1,0 +1,8 @@
+# Source file for our OWT 2 tuning. This should result in something close to OWT 2.
+title: HAHAHA 
+num_pitches: 12
+ideal_intervals: 100 204 267 386 498 600 702 800 900 969 1100
+interval_weights: 0.1 0.1 0.1 100.0 0.1 0.1 0.1 0.1 0.1 0.1 0.1
+key_weights: 100 0.1 0.1 0.1 0.1 100 0.1 100 0.1 0.1 0.1 0.1
+repeat_factor: 1200.0
+
